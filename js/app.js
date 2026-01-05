@@ -155,10 +155,53 @@ function initKeyboardShortcuts() {
 // ========================================
 function handleResponsive() {
     const sidebar = document.getElementById('sidebar');
+    const header = document.querySelector('.header');
+    const headerLeft = document.querySelector('.header-left');
+
+    // Create mobile menu toggle button
+    let mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    if (!mobileMenuToggle) {
+        mobileMenuToggle = document.createElement('button');
+        mobileMenuToggle.id = 'mobileMenuToggle';
+        mobileMenuToggle.className = 'mobile-menu-toggle';
+        mobileMenuToggle.innerHTML = '☰';
+        mobileMenuToggle.setAttribute('aria-label', 'Toggle Mobile Menu');
+        headerLeft.insertBefore(mobileMenuToggle, headerLeft.firstChild);
+    }
+
+    // Mobile menu toggle handler
+    mobileMenuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('mobile-open');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth < 768) {
+            if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        }
+    });
+
+    // Close sidebar when navigating on mobile
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+    });
 
     function checkWidth() {
         if (window.innerWidth < 768) {
-            sidebar.classList.add('collapsed');
+            // Mobile: hide mobile menu toggle button visibility
+            mobileMenuToggle.style.display = 'flex';
+            sidebar.classList.remove('collapsed');
+        } else {
+            // Desktop: hide mobile menu toggle
+            mobileMenuToggle.style.display = 'none';
+            sidebar.classList.remove('mobile-open');
         }
     }
 
